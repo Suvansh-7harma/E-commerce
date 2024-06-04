@@ -86,10 +86,10 @@ const AddProductPage = () => {
       <div className="flex justify-center items-center h-screen">
         {loading && <Loader />}
         {/* Login Form  */}
-        <div className="login_Form bg-gray-50 px-8 py-6 border border-gray-100 rounded-xl shadow-md">
+        <div className="login_Form bg-gray-50 px-8 py-6 border border-gray-400 rounded-xl shadow-md">
           {/* Top Heading  */}
           <div className="mb-5">
-            <h2 className="text-center text-2xl font-bold text-gray-500 ">
+            <h2 className="text-center text-2xl font-bold text-gray-700 ">
               Add Product
             </h2>
           </div>
@@ -107,7 +107,7 @@ const AddProductPage = () => {
                 });
               }}
               placeholder="Product Title"
-              className="bg-gray-50 border text-gray-300 border-gray-200 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-300"
+              className="bg-gray-50 border text-gray-700 border-gray-400 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
             />
           </div>
 
@@ -124,7 +124,7 @@ const AddProductPage = () => {
                 });
               }}
               placeholder="Product Price"
-              className="bg-gray-50 border text-gray-300 border-gray-200 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-300"
+              className="bg-gray-50 border text-gray-700 border-gray-400 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
             />
           </div>
 
@@ -141,7 +141,7 @@ const AddProductPage = () => {
                 });
               }}
               placeholder="Product Image Url"
-              className="bg-gray-50 border text-gray-300 border-gray-200 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-300"
+              className="bg-gray-50 border text-gray-700 border-gray-400 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
             />
           </div>
 
@@ -155,7 +155,7 @@ const AddProductPage = () => {
                   category: e.target.value,
                 });
               }}
-              className="w-full px-1 py-2 text-gray-300 bg-gray-50 border border-gray-200 rounded-md outline-none  "
+              className="w-full px-1 py-2 text-gray-700 bg-gray-50 border border-gray-400 rounded-md outline-none  "
             >
               <option disabled>Select Product Category</option>
               {categoryList.map((value, index) => {
@@ -186,7 +186,7 @@ const AddProductPage = () => {
               name="description"
               placeholder="Product Description"
               rows="5"
-              className=" w-full px-2 py-1 text-gray-300 bg-gray-50 border border-gray-200 rounded-md outline-none placeholder-gray-300 "
+              className=" w-full px-2 py-1 text-gray-700 bg-gray-50 border border-gray-400 rounded-md outline-none placeholder-gray-400 "
             ></textarea>
           </div>
 
@@ -195,7 +195,7 @@ const AddProductPage = () => {
             <button
               onClick={addProductFunction}
               type="button"
-              className="bg-gray-500 hover:bg-gray-600 w-full text-white text-center py-2 font-bold rounded-md "
+              className="bg-gray-500 hover:bg-gray-700 w-full text-white text-center py-2 font-bold rounded-md "
             >
               Add Product
             </button>

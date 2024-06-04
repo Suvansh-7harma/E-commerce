@@ -15,7 +15,7 @@ import MyState from "./context/myState";
 import { Toaster } from "react-hot-toast";
 import { ProtectedRouteForUser } from "./protectedRouteForUser/ProtectedRouteForUser";
 import { ProtectedRouteForAdmin } from "./protectedRouteForUser/ProtectedRouteForAdmin";
-import CategoryPage from "./components/category/Category";
+import CategoryPage from "./pages/category/CategoryPage";
 
 const App = () => {
   return (
