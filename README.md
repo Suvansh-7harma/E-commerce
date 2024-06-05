@@ -3,7 +3,7 @@ Introduction
 The E-commerce project is platform with an admin panel and user functionalities. It allows users to sign up, log in, manage products, add products to cart, and place orders. Admin users have additional privileges like viewing all orders, managing products.
 
 Project Hosted Link
-
+https://e-commerce-eight-lemon-75.vercel.app/
 Features
 User Features
 User Authentication
