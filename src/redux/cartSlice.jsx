@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = JSON.parse(localStorage.getItem("cart")) ?? [];
+const initialState = JSON.parse(localStorage.getItem("cart")) || [];
 console.log(initialState);
 
 export const cartSlice = createSlice({
@@ -18,25 +18,40 @@ export const cartSlice = createSlice({
       localStorage.setItem("cart", JSON.stringify(updatedState));
       return updatedState;
     },
+    // incrementQuantity(state, action) {
+    //   const updatedState = state.map((item) => {
+    //     if (item.id === action.payload) {
+    //       item.quantity++;
+    //     }
+    //     return item;
+    //   });
+    //   localStorage.setItem("cart", JSON.stringify(updatedState));
+    //   console.log("quantitycheck",updatedState);
+    //   return updatedState;
+    // },
     incrementQuantity(state, action) {
-      const updatedState = state.map((item) => {
-        if (item.id === action.payload) {
-          item.quantity++;
-        }
-        return item;
-      });
-      localStorage.setItem("cart", JSON.stringify(updatedState));
-      return updatedState;
+      const item = state.find((item) => item.id === action.payload);
+      if (item) {
+        item.quantity++;
+        localStorage.setItem("cart", JSON.stringify(state));
+      }
     },
+    // decrementQuantity(state, action) {
+    //   const updatedState = state.map((item) => {
+    //     if (item.id === action.payload && item.quantity > 1) {
+    //       item.quantity--;
+    //     }
+    //     return item;
+    //   });
+    //   localStorage.setItem("cart", JSON.stringify(updatedState));
+    //   return updatedState;
+    // },
     decrementQuantity(state, action) {
-      const updatedState = state.map((item) => {
-        if (item.id === action.payload && item.quantity > 1) {
-          item.quantity--;
-        }
-        return item;
-      });
-      localStorage.setItem("cart", JSON.stringify(updatedState));
-      return updatedState;
+      const item = state.find((item) => item.id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity--;
+        localStorage.setItem("cart", JSON.stringify(state));
+      }
     },
   },
 });
