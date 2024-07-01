@@ -167,7 +167,7 @@ const CartPage = () => {
                               <button
                                 onClick={() => handleDecrement(id)}
                                 type="button"
-                                className="h-7 w-7"
+                                className="h-7 w-7 bg-gray-400 rounded-md"
                               >
                                 -
                               </button>
@@ -179,7 +179,7 @@ const CartPage = () => {
                               <button
                                 onClick={() => handleIncrement(id)}
                                 type="button"
-                                className="flex h-7 w-7 items-center justify-center"
+                                className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-400"
                               >
                                 +
                               </button>
@@ -215,7 +215,7 @@ const CartPage = () => {
                 id="summary-heading"
                 className=" border-b border-gray-200 px-4 py-3 text-lg font-medium text-gray-900 sm:p-4"
               >
-                Price Details
+               📃 Price Details
               </h2>
               <div>
                 <dl className=" space-y-1 px-2 py-4">
