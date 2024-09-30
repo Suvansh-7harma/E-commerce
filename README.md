@@ -2,7 +2,7 @@
 🌐 Introduction
 The E-commerce Platform is a feature-rich online marketplace, offering functionalities for both users and administrators. Users can browse products, manage their carts, and place orders, while admins have elevated access to manage products and monitor sales activities.
 
-🔗 Live Demo: 
+🔗 Live Demo: https://e-commerce-eight-lemon-75.vercel.app/
 
 🚀 Features
 👥 User Features
