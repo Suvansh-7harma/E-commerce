@@ -23,24 +23,38 @@ function MyState({ children }) {
    *                          GET All Product Function
    *========================================================================**/
 
-  const getAllProductFunction = async () => {
+  const getAllProductFunction = () => {
     setLoading(true);
     try {
       const q = query(collection(fireDB, "products"), orderBy("time"));
-      const data = onSnapshot(q, (QuerySnapshot) => {
-        let productArray = [];
-        QuerySnapshot.forEach((doc) => {
-          productArray.push({ ...doc.data(), id: doc.id });
-        });
-        setGetAllProduct(productArray);
-        setLoading(false);
-      });
-      return () => data;
+
+      // Setting up the snapshot listener
+      const unsubscribe = onSnapshot(
+        q,
+        (QuerySnapshot) => {
+          const productArray = [];
+          QuerySnapshot.forEach((doc) => {
+            productArray.push({ ...doc.data(), id: doc.id });
+          });
+
+          // Update state with products and stop loading
+          setGetAllProduct(productArray);
+          setLoading(false);
+        },
+        (error) => {
+          console.error("Error in snapshot listener:", error);
+          setLoading(false); // Stop loading if there's an error
+        }
+      );
+
+      // Return the unsubscribe function to clean up the listener when needed
+      return unsubscribe;
     } catch (error) {
-      console.log(error);
+      console.error("Error in getAllProductFunction:", error);
       setLoading(false);
     }
   };
+
 
   // Order State
   const [getAllOrder, setGetAllOrder] = useState([]);

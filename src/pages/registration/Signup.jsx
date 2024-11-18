@@ -21,6 +21,7 @@ const Signup = () => {
     email: "",
     password: "",
     role: "user",
+   
   });
 
   /**========================================================================
@@ -28,7 +29,6 @@ const Signup = () => {
    *========================================================================**/
 
   const userSignupFunction = async () => {
-    // validation
     if (
       userSignup.name === "" ||
       userSignup.email === "" ||
@@ -40,17 +40,17 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const users = await createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         userSignup.email,
         userSignup.password
       );
+      const user = userCredential.user;
 
-      // create user object
-      const user = {
+      const userData = {
         name: userSignup.name,
-        email: users.user.email,
-        uid: users.user.uid,
+        email: user.email, // Retrieve email directly from the user object
+        uid: user.uid,
         role: userSignup.role,
         time: Timestamp.now(),
         date: new Date().toLocaleString("en-US", {
@@ -60,11 +60,8 @@ const Signup = () => {
         }),
       };
 
-      // create user Reference
       const userReference = collection(fireDB, "user");
-
-      // Add User Detail
-      addDoc(userReference, user);
+      await addDoc(userReference, userData);
 
       setUserSignup({
         name: "",
@@ -73,14 +70,15 @@ const Signup = () => {
       });
 
       toast.success("Signup Successfully");
-
       setLoading(false);
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      console.log("Signup Error: ", error);
+      toast.error("Signup Failed");
       setLoading(false);
     }
   };
+
   return (
     <div className="flex justify-center items-center h-screen">
       {loading && <Loader />}

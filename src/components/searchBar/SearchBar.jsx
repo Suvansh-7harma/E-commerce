@@ -69,5 +69,48 @@ const SearchBar = () => {
     </div>
   );
 };
+// return (
+//   <div className="relative w-full lg:w-auto">
+//     {/* Search input */}
+//     <div className="flex justify-center lg:justify-end">
+//       <input
+//         type="text"
+//         placeholder="Search here..."
+//         onChange={(e) => setSearch(e.target.value)}
+//         className="bg-gray-200 placeholder-gray-500 rounded-full px-4 py-2 w-full lg:w-80 focus:ring-2 focus:ring-yellow-400 outline-none transition-all duration-300"
+//       />
+//     </div>
+
+//     {/* Search drop-down */}
+//     {search && (
+//       <div className="absolute bg-gray-200 w-full lg:w-80 z-50 my-2 rounded-lg shadow-lg">
+//         {filterSearchData.length > 0 ? (
+//           filterSearchData.map((item, index) => (
+//             <div
+//               key={index}
+//               className="py-2 px-4 hover:bg-gray-300 cursor-pointer transition-colors duration-200"
+//               onClick={() => navigate(`/productinfo/${item.id}`)}
+//             >
+//               <div className="flex items-center gap-3">
+//                 <img className="w-8 h-8 rounded-full" src={item.productImageUrl} alt="" />
+//                 <span className="text-gray-700 font-medium">{item.title}</span>
+//               </div>
+//             </div>
+//           ))
+//         ) : (
+//           <div className="flex justify-center py-3">
+//             <img
+//               className="w-16"
+//               src="https://cdn-icons-png.flaticon.com/128/10437/10437090.png"
+//               alt="No results"
+//             />
+//           </div>
+//         )}
+//       </div>
+//     )}
+//   </div>
+// );
+
+
 
 export default SearchBar;

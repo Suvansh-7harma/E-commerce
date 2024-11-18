@@ -1,62 +1,61 @@
+
+
 import { createSlice } from "@reduxjs/toolkit";
 
+// Initial state is fetched from local storage or set to an empty array
 const initialState = JSON.parse(localStorage.getItem("cart")) || [];
-console.log(initialState);
+
+// Helper function to save the current state to local storage
+const saveToLocalStorage = (state) => {
+  localStorage.setItem("cart", JSON.stringify(state));
+};
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // Adds an item to the cart
     addToCart(state, action) {
       state.push(action.payload);
-      localStorage.setItem("cart", JSON.stringify(state));
+      saveToLocalStorage(state);
     },
+
+    // Deletes an item from the cart based on its id
     deleteFromCart(state, action) {
       const updatedState = state.filter(
         (item) => item.id !== action.payload.id
       );
-      localStorage.setItem("cart", JSON.stringify(updatedState));
-      return updatedState;
+      saveToLocalStorage(updatedState);
+      return updatedState; // Return updated state to replace the old one
     },
-    // incrementQuantity(state, action) {
-    //   const updatedState = state.map((item) => {
-    //     if (item.id === action.payload) {
-    //       item.quantity++;
-    //     }
-    //     return item;
-    //   });
-    //   localStorage.setItem("cart", JSON.stringify(updatedState));
-    //   console.log("quantitycheck",updatedState);
-    //   return updatedState;
-    // },
+
+    // Increments quantity of an item in the cart
     incrementQuantity(state, action) {
       const item = state.find((item) => item.id === action.payload);
       if (item) {
         item.quantity++;
-        localStorage.setItem("cart", JSON.stringify(state));
+        saveToLocalStorage(state);
       }
     },
-    // decrementQuantity(state, action) {
-    //   const updatedState = state.map((item) => {
-    //     if (item.id === action.payload && item.quantity > 1) {
-    //       item.quantity--;
-    //     }
-    //     return item;
-    //   });
-    //   localStorage.setItem("cart", JSON.stringify(updatedState));
-    //   return updatedState;
-    // },
+
+    // Decrements quantity of an item in the cart, removing it if quantity is 1
     decrementQuantity(state, action) {
       const item = state.find((item) => item.id === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity--;
-        localStorage.setItem("cart", JSON.stringify(state));
+      if (item) {
+        if (item.quantity > 1) {
+          item.quantity--;
+        } else {
+          const updatedState = state.filter((i) => i.id !== item.id);
+          saveToLocalStorage(updatedState);
+          return updatedState;
+        }
+        saveToLocalStorage(state);
       }
     },
   },
 });
 
-// Action creators are generated for each case reducer function
+// Action creators for each reducer function
 export const {
   addToCart,
   deleteFromCart,
@@ -64,4 +63,5 @@ export const {
   decrementQuantity,
 } = cartSlice.actions;
 
+// Exporting the reducer
 export default cartSlice.reducer;
