@@ -50,10 +50,10 @@ const Track = () => {
               </svg>
 
               <h2 className="title-font font-medium text-lg text-gray-900">
-                Premium Tshirts
+                Premium jackets
               </h2>
               <p className="leading-relaxed">
-                Our T-Shirts are 100% made of cotton.
+                Our jackets are 100% made of Leather.
               </p>
             </div>
           </div>
@@ -77,10 +77,10 @@ const Track = () => {
               </svg>
 
               <h2 className="title-font font-medium text-lg text-gray-900">
-                Premium Tshirts
+                Premium Kurta's
               </h2>
               <p className="leading-relaxed">
-                Our T-Shirts are 100% made of cotton.
+                Our Kurta's are 100% made of cotton.
               </p>
             </div>
           </div>

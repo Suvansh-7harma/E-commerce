@@ -3,97 +3,84 @@ import SearchBar from "../searchBar/SearchBar";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  // get user from localStorage
+  // Fetch user from localStorage
   const user = JSON.parse(localStorage.getItem("users"));
 
-  // navigate
+  // Navigate hook
   const navigate = useNavigate();
 
-  // logout function
-  const logout = () => {
+  // Logout handler
+  const handleLogout = () => {
     localStorage.clear("users");
     navigate("/login");
   };
 
-  // CartItems
+  // Get cart items from Redux
   const cartItems = useSelector((state) => state.cart);
 
-  // navList Data
+  // Navigation items
   const navList = (
-    <ul className="flex space-x-3 text-white font-medium text-md px-5 ">
-      {/* Home */}
+    <ul className="flex space-x-6 text-white font-semibold text-md px-5">
       <li>
-        <Link to={"/"}>Home</Link>
+        <Link to="/">Home</Link>
       </li>
-
-      {/* All Product */}
       <li>
-        <Link to={"/allproduct"}>All Product</Link>
+        <Link to="/allproduct">All Products</Link>
       </li>
-
-      {/* Signup */}
       {!user ? (
-        <li>
-          <Link to={"/signup"}>Signup</Link>
-        </li>
+        <>
+          <li>
+            <Link to="/signup">Sign Up</Link>
+          </li>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        </>
       ) : (
-        ""
+        <>
+          {user?.role === "user" && (
+            <li>
+              <Link to="/user-dashboard">Dashboard</Link>
+            </li>
+          )}
+          {user?.role === "admin" && (
+            <li>
+              <Link to="/admin-dashboard">Admin Panel</Link>
+            </li>
+          )}
+          <li className="cursor-pointer" onClick={handleLogout}>
+            Logout
+          </li>
+        </>
       )}
-
-      {/* Login */}
-      {!user ? (
-        <li>
-          <Link to={"/login"}>Login</Link>
-        </li>
-      ) : (
-        ""
-      )}
-
-      {/* User */}
-      {user?.role === "user" && (
-        <li>
-          <Link to={"/user-dashboard"}>User</Link>
-        </li>
-      )}
-
-      {/* Admin */}
-      {user?.role === "admin" && (
-        <li>
-          <Link to={"/admin-dashboard"}>Admin</Link>
-        </li>
-      )}
-
-      {/* logout */}
-      {user && (
-        <li className=" cursor-pointer" onClick={logout}>
-          logout
-        </li>
-      )}
-
-      {/* Cart */}
       <li>
-        <Link to={"/cart"}>Cart({cartItems.length})</Link>
+        <Link to="/cart">Cart ({cartItems.length})</Link>
       </li>
     </ul>
   );
+
   return (
-    <nav className="bg-gray-600 sticky top-0">
-      {/* main  */}
-      <div className="lg:flex lg:justify-between items-center py-3 lg:px-3 ">
-        {/* left  */}
-        <div className="left py-3 lg:py-0">
-          <Link to={"/"}>
-            <h2 className=" font-bold text-white text-2xl text-center">
-              E-Cart
-            </h2>
+    <nav className="bg-gray-800 fixed top-0 w-full z-50 shadow-lg">
+      <div className="container mx-auto flex items-center justify-between py-4 px-6">
+        {/* Brand Logo */}
+        <div className="text-center">
+          <Link to="/">
+            <h1 className="text-3xl font-extrabold text-white">E-Cart</h1>
           </Link>
         </div>
 
-        {/* right  */}
-        <div className="right flex justify-center mb-4 lg:mb-0">{navList}</div>
+        {/* Navigation Menu */}
+        <div className="hidden lg:block">{navList}</div>
 
-        {/* Search Bar  */}
-        <SearchBar />
+        {/* Search Bar */}
+        <div className="mt-4 lg:mt-0">
+          <SearchBar />
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      <div className="lg:hidden flex justify-center bg-gray-700 py-3">
+        {navList}
       </div>
     </nav>
   );

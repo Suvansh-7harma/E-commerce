@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 
-// category
 const category = [
   {
     image: "https://cdn-icons-png.flaticon.com/256/4359/4359963.png",
@@ -37,46 +36,51 @@ const category = [
 ];
 
 const Category = () => {
-  // naviaget
   const navigate = useNavigate();
-  return (
-    <div>
-      <div className="flex flex-col mt-5">
-        {/* main 1 */}
-        <div className="flex overflow-x-scroll lg:justify-center  hide-scroll-bar">
-          {/* main 2  */}
-          <div className="flex ">
-            {/* category  */}
-            {category.map((item, index) => {
-              return (
-                <div key={index} className="px-3 lg:px-10">
-                  {/* Image  */}
-                  <div
-                    onClick={() => navigate(`/category/${item.name}`)}
-                    className=" w-16 h-16 lg:w-24 lg:h-24 max-w-xs rounded-full  bg-gray-500 transition-all hover:bg-gray-400 cursor-pointer mb-1 "
-                  >
-                    <div className="flex justify-center mb-12">
-                      {/* Image tag  */}
-                      <img src={item.image} alt="img" />
-                    </div>
-                  </div>
 
-                  {/* Name Text  */}
-                  <h1 className=" text-sm lg:text-lg text-center font-medium title-font first-letter:uppercase ">
-                    {item.name}
-                  </h1>
-                </div>
-              );
-            })}
-          </div>
+  return (
+    <div className="py-6 bg-gray-100">
+      <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 text-center mb-6">
+        Shop by Category
+      </h2>
+      <div className="flex overflow-x-scroll lg:justify-center hide-scroll-bar">
+        <div className="flex gap-6">
+          {category.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => navigate(`/category/${item.name}`)}
+            >
+              {/* Category Image */}
+              <div className="w-20 h-20 lg:w-28 lg:h-28 rounded-full bg-gray-200 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-12 h-12 lg:w-16 lg:h-16"
+                />
+              </div>
+
+              {/* Category Name */}
+              <h3 className="text-sm lg:text-lg text-gray-700 font-medium mt-3 capitalize">
+                {item.name}
+              </h3>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* style  */}
+      {/* Hide Scrollbar Styling */}
       <style
         dangerouslySetInnerHTML={{
-          __html:
-            "\n.hide-scroll-bar {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n.hide-scroll-bar::-webkit-scrollbar {\n  display: none;\n}\n",
+          __html: `
+          .hide-scroll-bar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .hide-scroll-bar::-webkit-scrollbar {
+            display: none;
+          }
+        `,
         }}
       />
     </div>
