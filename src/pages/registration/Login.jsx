@@ -15,8 +15,13 @@ const Login = () => {
   // navigate
   const navigate = useNavigate();
 
-  // User Signup State
+  // User Login State
   const [userLogin, setUserLogin] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
     email: "",
     password: "",
   });
@@ -25,10 +30,40 @@ const Login = () => {
    *                          User Login Function
    *========================================================================**/
 
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      email: "",
+      password: "",
+    };
+
+    // Email Validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!userLogin.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!emailRegex.test(userLogin.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Password Validation
+    if (!userLogin.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (userLogin.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const userLoginFunction = async () => {
-    // validation
-    if (userLogin.email === "" || userLogin.password === "") {
-      toast.error("All Fields are required");
+    // Validate form fields
+    if (!validateForm()) {
+      return;
     }
 
     setLoading(true);
@@ -38,7 +73,6 @@ const Login = () => {
         userLogin.email,
         userLogin.password
       );
-      // console.log(users.user)
 
       try {
         const q = query(
@@ -72,20 +106,19 @@ const Login = () => {
       toast.error("Login Failed");
     }
   };
+
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
       {loading && <Loader />}
       {/* Login Form  */}
-      <div className="login_Form bg-gray-50 px-8 py-6 border border-gray-300 rounded-xl shadow-md">
+      <div className="bg-white px-8 py-6 border border-gray-300 rounded-xl shadow-md w-full max-w-sm">
         {/* Top Heading  */}
-        <div className="mb-5">
-          <h2 className="text-center text-2xl font-bold text-gray-500 ">
-            Login
-          </h2>
+        <div className="mb-5 text-center">
+          <h2 className="text-2xl font-bold text-gray-700">Login</h2>
         </div>
 
-        {/* Input One  */}
-        <div className="mb-3">
+        {/* Email Input  */}
+        <div className="mb-4">
           <input
             type="email"
             name="email"
@@ -97,12 +130,15 @@ const Login = () => {
                 email: e.target.value,
               });
             }}
-            className="bg-gray-50 border border-gray-300 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
+            className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email}</p>
+          )}
         </div>
 
-        {/* Input Two  */}
-        <div className="mb-5">
+        {/* Password Input  */}
+        <div className="mb-4">
           <input
             type="password"
             placeholder="Password"
@@ -113,25 +149,29 @@ const Login = () => {
                 password: e.target.value,
               });
             }}
-            className="bg-gray-50 border border-gray-300 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
+            className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password}</p>
+          )}
         </div>
 
-        {/* Signup Button  */}
+        {/* Login Button  */}
         <div className="mb-5">
           <button
             type="button"
             onClick={userLoginFunction}
-            className="bg-gray-500 hover:bg-gray-600 w-full text-white text-center py-2 font-bold rounded-md "
+            className="bg-gray-500 hover:bg-gray-600 w-full text-white py-2 font-bold rounded-md"
           >
             Login
           </button>
         </div>
 
-        <div>
-          <h2 className="text-black">
-            Don't Have an account{" "}
-            <Link className=" text-gray-500 font-bold" to={"/signup"}>
+        {/* Sign Up Link  */}
+        <div className="text-center">
+          <h2 className="text-gray-700">
+            Don't have an account?{" "}
+            <Link className="text-gray-500 font-bold" to="/signup">
               Signup
             </Link>
           </h2>

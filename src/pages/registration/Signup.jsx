@@ -21,20 +21,60 @@ const Signup = () => {
     email: "",
     password: "",
     role: "user",
-   
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
   });
 
   /**========================================================================
    *                          User Signup Function
    *========================================================================**/
 
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+    };
+
+    // Name Validation
+    if (!userSignup.name) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    } else if (userSignup.name.length < 3) {
+      newErrors.name = "Name must be at least 3 characters long";
+      isValid = false;
+    }
+
+    // Email Validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!userSignup.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!emailRegex.test(userSignup.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Password Validation
+    if (!userSignup.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (userSignup.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const userSignupFunction = async () => {
-    if (
-      userSignup.name === "" ||
-      userSignup.email === "" ||
-      userSignup.password === ""
-    ) {
-      toast.error("All Fields are required");
+    if (!validateForm()) {
       return;
     }
 
@@ -80,19 +120,17 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
       {loading && <Loader />}
-      {/* Login Form  */}
-      <div className="login_Form bg-gray-50 px-8 py-6 border border-gray-300 rounded-xl shadow-md">
+      {/* Signup Form  */}
+      <div className="bg-white px-8 py-6 border border-gray-300 rounded-xl shadow-md w-full max-w-sm">
         {/* Top Heading  */}
-        <div className="mb-5">
-          <h2 className="text-center text-2xl font-bold text-gray-600 ">
-            Signup
-          </h2>
+        <div className="mb-5 text-center">
+          <h2 className="text-2xl font-bold text-gray-700">Signup</h2>
         </div>
 
-        {/* Input One  */}
-        <div className="mb-3">
+        {/* Name Input  */}
+        <div className="mb-4">
           <input
             type="text"
             placeholder="Full Name"
@@ -103,12 +141,13 @@ const Signup = () => {
                 name: e.target.value,
               });
             }}
-            className="bg-gray-50 border border-gray-300 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
+            className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
 
-        {/* Input Two  */}
-        <div className="mb-3">
+        {/* Email Input  */}
+        <div className="mb-4">
           <input
             type="email"
             placeholder="Email Address"
@@ -119,11 +158,14 @@ const Signup = () => {
                 email: e.target.value,
               });
             }}
-            className="bg-gray-50 border border-gray-300 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
+            className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email}</p>
+          )}
         </div>
 
-        {/* Input Three  */}
+        {/* Password Input  */}
         <div className="mb-5">
           <input
             type="password"
@@ -135,8 +177,11 @@ const Signup = () => {
                 password: e.target.value,
               });
             }}
-            className="bg-gray-50 border border-gray-300 px-2 py-2 w-96 rounded-md outline-none placeholder-gray-400"
+            className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password}</p>
+          )}
         </div>
 
         {/* Signup Button  */}
@@ -144,16 +189,17 @@ const Signup = () => {
           <button
             type="button"
             onClick={userSignupFunction}
-            className="bg-gray-500 hover:bg-gray-600 w-full text-white text-center py-2 font-bold rounded-md "
+            className="bg-gray-500 hover:bg-gray-600 w-full text-white py-2 font-bold rounded-md"
           >
             Signup
           </button>
         </div>
 
-        <div>
-          <h2 className="text-black">
-            Have an account{" "}
-            <Link className=" text-gray-600 font-bold" to={"/login"}>
+        {/* Login Link  */}
+        <div className="text-center">
+          <h2 className="text-gray-700">
+            Already have an account?{" "}
+            <Link className="text-gray-500 font-bold" to="/login">
               Login
             </Link>
           </h2>
