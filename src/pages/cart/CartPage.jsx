@@ -1,266 +1,143 @@
-import { useDispatch, useSelector } from "react-redux";
-import Layout from "../../components/layout/Layout";
-import { Trash } from "lucide-react";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
+  incrementQuantity,
   decrementQuantity,
   deleteFromCart,
-  incrementQuantity,
 } from "../../redux/cartSlice";
-import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { Timestamp, addDoc, collection } from "firebase/firestore";
-import { fireDB } from "../../firebase/FirebaseConfig";
 import BuyNowModal from "../../components/buyNowModal/BuyNowModal";
-import { Navigate } from "react-router";
+import { loadStripe } from "@stripe/stripe-js";
+
 
 const CartPage = () => {
-  const cartItems = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  const deleteCart = (item) => {
-    dispatch(deleteFromCart(item));
-    toast.success("Delete cart");
-  };
-
-  const handleIncrement = (id) => {
-    dispatch(incrementQuantity(id));
-  };
-
-  const handleDecrement = (id) => {
-    dispatch(decrementQuantity(id));
-  };
-
-  // const cartQuantity = cartItems.length;
-
-  const cartItemTotal = cartItems
-    .map((item) => item.quantity)
-    .reduce((prevValue, currValue) => prevValue + currValue, 0);
-
-  const cartTotal = cartItems
-    .map((item) => item.price * item.quantity)
-    .reduce((prevValue, currValue) => prevValue + currValue, 0);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  // user
-  const user = JSON.parse(localStorage.getItem("users"));
-
-  // Buy Now Function
   const [addressInfo, setAddressInfo] = useState({
     name: "",
     address: "",
     pincode: "",
     mobileNumber: "",
-    time: Timestamp.now(),
-    date: new Date().toLocaleString("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    }),
   });
 
   const buyNowFunction = () => {
-    // validation
-    if (
-      addressInfo.name === "" ||
-      addressInfo.address === "" ||
-      addressInfo.pincode === "" ||
-      addressInfo.mobileNumber === ""
-    ) {
-      return toast.error("All Fields are required");
-    }
+    // Mock buy now functionality
+    console.log("Purchase Successful!", { addressInfo, cart });
+    setAddressInfo({ name: "", address: "", pincode: "", mobileNumber: "" }); // Reset form
+  };
 
-    // Order Info
-    const orderInfo = {
-      cartItems,
-      addressInfo,
-      email: user.email,
-      userid: user.uid,
-      status: "confirmed",
-      time: Timestamp.now(),
-      date: new Date().toLocaleString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      }),
-    };
+  const total = cart.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+  const handleCheckout = async () => {
+    // Load Stripe with your publishable key
+    const stripe = await loadStripe("your-publishable-key"); // Replace with your actual key
+
     try {
-      const orderRef = collection(fireDB, "order");
-      addDoc(orderRef, orderInfo);
-      setAddressInfo({
-        name: "",
-        address: "",
-        pincode: "",
-        mobileNumber: "",
-      });
-      toast.success("Order Placed Successfull");
+      // Make a request to your Firebase Cloud Function
+      const response = await fetch(
+        "https://your-cloud-function-url/createCheckoutSession",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cart }), // Ensure cart data is in the expected format
+        }
+      );
+
+      const session = await response.json();
+
+      if (session.id) {
+        // Redirect to Stripe Checkout
+        await stripe.redirectToCheckout({ sessionId: session.id });
+      } else {
+        alert("Payment session could not be created.");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error during checkout:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
-  return (
-    <Layout>
-      <div className="container mx-auto px-4 max-w-7xl lg:px-0">
-        <div className="mx-auto max-w-2xl py-8 lg:max-w-7xl">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Shopping Cart
-          </h1>
-          <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
-            <section
-              aria-labelledby="cart-heading"
-              className="rounded-lg bg-white lg:col-span-8"
-            >
-              <h2 id="cart-heading" className="sr-only">
-                Items in your shopping cart
-              </h2>
-              <ul role="list" className="divide-y divide-gray-200">
-                {cartItems.length > 0 ? (
-                  <>
-                    {cartItems.map((item, index) => {
-                      const {
-                        id,
-                        title,
-                        price,
-                        productImageUrl,
-                        quantity,
-                        category,
-                      } = item;
-                      return (
-                        <div key={index} className="">
-                          <li className="flex py-6 sm:py-6 ">
-                            <div className="flex-shrink-0">
-                              <img
-                                src={productImageUrl}
-                                alt="img"
-                                className="sm:h-38 sm:w-38 h-24 w-24 rounded-md object-contain object-center"
-                              />
-                            </div>
 
-                            <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
-                              <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                                <div>
-                                  <div className="flex justify-between">
-                                    <h3 className="text-sm">
-                                      <div className="font-semibold text-black">
-                                        {title}
-                                      </div>
-                                    </h3>
-                                  </div>
-                                  <div className="mt-1 flex text-sm">
-                                    <p className="text-sm text-gray-500">
-                                      {category}
-                                    </p>
-                                  </div>
-                                  <div className="mt-1 flex items-end">
-                                    <p className="text-sm font-medium text-gray-900">
-                                      ₹{price}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                          <div className="mb-2 flex">
-                            <div className="min-w-24 flex">
-                              <button
-                                onClick={() => handleDecrement(id)}
-                                type="button"
-                                className="h-7 w-7 bg-gray-400 rounded-md"
-                              >
-                                -
-                              </button>
-                              <input
-                                type="text"
-                                className="mx-1 h-7 w-9 rounded-md border text-center"
-                                value={quantity}
-                              />
-                              <button
-                                onClick={() => handleIncrement(id)}
-                                type="button"
-                                className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-400"
-                              >
-                                +
-                              </button>
-                            </div>
-                            <div className="ml-6 flex text-sm">
-                              <button
-                                onClick={() => deleteCart(item)}
-                                type="button"
-                                className="flex items-center space-x-1 px-2 py-1 pl-0"
-                              >
-                                <Trash size={12} className="text-red-500" />
-                                <span className="text-xs font-medium text-red-500">
-                                  Remove
-                                </span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <h1>Not Found</h1>
-                )}
-              </ul>
-            </section>
-            {/* Order summary */}
-            <section
-              aria-labelledby="summary-heading"
-              className="mt-16 rounded-md bg-white lg:col-span-4 lg:mt-0 lg:p-0"
-            >
-              <h2
-                id="summary-heading"
-                className=" border-b border-gray-200 px-4 py-3 text-lg font-medium text-gray-900 sm:p-4"
-              >
-               📃 Price Details
-              </h2>
-              <div>
-                <dl className=" space-y-1 px-2 py-4">
-                  <div className="flex items-center justify-between">
-                    <dt className="text-sm text-gray-800">
-                      Price ({cartItemTotal} item)
-                    </dt>
-                    <dd className="text-sm font-medium text-gray-900">
-                      ₹ {cartTotal}
-                    </dd>
-                  </div>
-                  <div className="flex items-center justify-between py-4">
-                    <dt className="flex text-sm text-gray-800">
-                      <span>Delivery Charges</span>
-                    </dt>
-                    <dd className="text-sm font-medium text-green-700">Free</dd>
-                  </div>
-                  <div className="flex items-center justify-between border-y border-dashed py-4 ">
-                    <dt className="text-base font-medium text-gray-900">
-                      Total Amount
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900">
-                      ₹ {cartTotal}
-                    </dd>
-                  </div>
-                </dl>
-                <div className="px-2 pb-4 font-medium text-green-700">
-                  <div className="flex gap-4 mb-6">
-                    {user ? (
-                      <BuyNowModal
-                        addressInfo={addressInfo}
-                        setAddressInfo={setAddressInfo}
-                        buyNowFunction={buyNowFunction}
-                      />
-                    ) : (
-                      <Navigate to={"/login"} />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </section>
-          </form>
+  // Handle decrementing the quantity, ensuring it doesn't go below 1
+  const handleDecrement = (itemId, quantity) => {
+    if (quantity > 1) {
+      dispatch(decrementQuantity(itemId));
+    } else {
+      // Optionally show a message if needed
+      console.log("Quantity cannot go below 1");
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Shopping Cart</h1>
+
+      {/* If the cart is empty */}
+      {cart.length === 0 ? (
+        <div className="text-center text-lg text-gray-500">
+          Your cart is empty.
         </div>
-      </div>
-    </Layout>
+      ) : (
+        <div className="space-y-6">
+          {/* Cart Items */}
+          {cart.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b py-4 px-6 bg-white rounded-lg shadow-md hover:shadow-xl transition duration-200"
+            >
+              {/* Product Image */}
+              <img
+                src={item.productImageUrl} // Assuming each item has an image URL
+                alt={item.name}
+                className="w-24 h-24 object-cover rounded-md sm:mr-6"
+              />
+              {/* Product Details */}
+              <div className="sm:flex-1 text-center sm:text-left">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {item.name}
+                </h2>
+                <p className="text-sm text-gray-500">Price: ₹{item.price}</p>
+                <p className="text-sm text-gray-500">
+                  Quantity: {item.quantity}
+                </p>
+              </div>
+
+              {/* Quantity Controls */}
+              <div className="flex space-x-2 mt-4 sm:mt-0 sm:flex-col sm:space-x-0 sm:space-y-2">
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-all"
+                  onClick={() => handleDecrement(item.id, item.quantity)}
+                >
+                  -
+                </button>
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-all"
+                  onClick={() => dispatch(incrementQuantity(item.id))}
+                >
+                  +
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
+                  onClick={() => dispatch(deleteFromCart({ id: item.id }))}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+          {/* Total and Buy Now */}
+          <div className="flex justify-between items-center mt-6 bg-gray-100 py-4 px-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Total: ₹{total.toFixed(2)}
+            </h2>
+            <BuyNowModal
+              addressInfo={addressInfo}
+              setAddressInfo={setAddressInfo}
+              buyNowFunction={buyNowFunction}
+            />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

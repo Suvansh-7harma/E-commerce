@@ -1,183 +1,135 @@
-import { useContext } from "react";
+import React, { createContext, useContext } from "react";
 import Layout from "../../components/layout/Layout";
-import myContext from "../../context/myContext";
 import Loader from "../../components/loader/Loader";
 
+// Create User Context
+export const UserContext = createContext();
+
 const UserDashboard = () => {
-  // user
+  // Get user details from localStorage
   const user = JSON.parse(localStorage.getItem("users"));
 
+  // Context for loading and orders (assume this is populated by some API call)
   const context = useContext(myContext);
   const { loading, getAllOrder } = context;
 
   return (
-    <Layout>
-      <div className=" container mx-auto px-4 py-5 lg:py-8">
-        {/* Top  */}
-        <div className="top ">
-          {/* main  */}
-          <div className=" bg-gray-50 py-5 rounded-xl border border-gray-100">
-            {/* image  */}
+    <UserContext.Provider value={user}>
+      <Layout>
+        {/* Hero Section or Other Components can consume the context */}
+        <div className="container mx-auto px-4 py-5 lg:py-8">
+          {/* User Information Section */}
+          <div className="bg-gray-50 py-5 rounded-xl border border-gray-100">
+            {/* User Avatar */}
             <div className="flex justify-center">
               <img
                 src="https://cdn-icons-png.flaticon.com/128/2202/2202112.png"
-                alt=""
+                alt="User Avatar"
+                className="rounded-full w-24 h-24 border-2 border-gray-200"
               />
             </div>
-            {/* text  */}
-            <div className="">
-              {/* Name  */}
-              <h1 className=" text-center text-lg">
-                <span className=" font-bold">Name : </span>
-                {user?.name}
+            {/* User Details */}
+            <div className="mt-4 text-center">
+              <h1 className="text-lg">
+                <span className="font-bold">Name:</span> {user?.name || "N/A"}
               </h1>
-
-              {/* Email  */}
-              <h1 className=" text-center text-lg">
-                <span className=" font-bold">Email : </span>
-                {user?.email}
+              <h1 className="text-lg">
+                <span className="font-bold">Email:</span> {user?.email || "N/A"}
               </h1>
-
-              {/* Date  */}
-              <h1 className=" text-center text-lg">
-                <span className=" font-bold">Date : </span>
-                {user?.date}
+              <h1 className="text-lg">
+                <span className="font-bold">Date:</span> {user?.date || "N/A"}
               </h1>
-
-              {/* Role  */}
-              <h1 className=" text-center text-lg">
-                <span className=" font-bold">Role : </span>
-                {user?.role}
+              <h1 className="text-lg">
+                <span className="font-bold">Role:</span> {user?.role || "N/A"}
               </h1>
             </div>
           </div>
-        </div>
 
-        {/* bottom  */}
-        <div className="bottom">
-          {/* main 1 */}
-          <div className="mx-auto my-4 max-w-6xl px-2 md:my-6 md:px-0">
-            {/* text  */}
-            <h2 className=" text-2xl lg:text-3xl font-bold">Order Details</h2>
-
-            <div className="flex justify-center relative top-10">
-              {loading && <Loader />}
-            </div>
-
-            {/* main 2 */}
-            {getAllOrder
-              .filter((obj) => obj.userid === user?.uid)
-              .map((order, index) => {
-                return (
-                  <div key={index}>
-                    {order.cartItems.map((item, index) => {
-                      const {
-                        id,
-                        date,
-                        quantity,
-                        price,
-                        title,
-                        productImageUrl,
-                        category,
-                      } = item;
-                      const { status } = order;
-                      return (
-                        <div
-                          key={index}
-                          className="mt-5 flex flex-col overflow-hidden rounded-xl border border-gray-100 md:flex-row"
+          {/* Orders Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl lg:text-3xl font-bold">Order Details</h2>
+            {loading && (
+              <div className="flex justify-center mt-5">
+                <Loader />
+              </div>
+            )}
+            <div className="mt-5">
+              {getAllOrder
+                .filter((order) => order.userid === user?.uid)
+                .map((order, index) => (
+                  <div
+                    key={index}
+                    className="border rounded-lg mb-4 p-5 shadow-md"
+                  >
+                    {/* Order Metadata */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-sm font-semibold">Order ID</p>
+                        <p className="text-sm text-gray-700">#{order.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Date</p>
+                        <p className="text-sm text-gray-700">{order.date}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Status</p>
+                        <p
+                          className={`text-sm ${
+                            order.status === "delivered"
+                              ? "text-green-600"
+                              : "text-gray-700"
+                          }`}
                         >
-                          {/* main 3  */}
-                          <div className="w-full border-r border-gray-100 bg-gray-50 md:max-w-xs">
-                            {/* left  */}
-                            <div className="p-8">
-                              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-1">
-                                <div className="mb-4">
-                                  <div className="text-sm font-semibold text-black">
-                                    Order Id
-                                  </div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    #{id}
-                                  </div>
-                                </div>
-
-                                <div className="mb-4">
-                                  <div className="text-sm font-semibold">
-                                    Date
-                                  </div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {date}
-                                  </div>
-                                </div>
-
-                                <div className="mb-4">
-                                  <div className="text-sm font-semibold">
-                                    Total Amount
-                                  </div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    ₹ {price * quantity}
-                                  </div>
-                                </div>
-
-                                <div className="mb-4">
-                                  <div className="text-sm font-semibold">
-                                    Order Status
-                                  </div>
-                                  <div className="text-sm font-medium text-green-800 first-letter:uppercase">
-                                    {status}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          {/* right  */}
-                          <div className="flex-1">
-                            <div className="p-8">
-                              <ul className="-my-7 divide-y divide-gray-200">
-                                <li className="flex flex-col justify-between space-x-5 py-7 md:flex-row">
-                                  <div className="flex flex-1 items-stretch">
-                                    <div className="flex-shrink-0">
-                                      <img
-                                        className="h-40 w-40 rounded-lg border border-gray-200 object-contain"
-                                        src={productImageUrl}
-                                        alt="img"
-                                      />
-                                    </div>
-
-                                    <div className="ml-5 flex flex-col justify-between">
-                                      <div className="flex-1">
-                                        <p className="text-sm font-bold text-gray-900">
-                                          {title}
-                                        </p>
-                                        <p className="mt-1.5 text-sm font-medium text-gray-500">
-                                          {category}
-                                        </p>
-                                      </div>
-
-                                      <p className="mt-4 text-sm font-medium text-gray-500">
-                                        x {quantity}
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  <div className="ml-auto flex flex-col items-end justify-between">
-                                    <p className="text-right text-sm font-bold text-gray-900">
-                                      ₹ {price}
-                                    </p>
-                                  </div>
-                                </li>
-                              </ul>
-                            </div>
+                          {order.status}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Total Amount</p>
+                        <p className="text-sm text-gray-700">
+                          ₹
+                          {order.cartItems.reduce(
+                            (sum, item) => sum + item.price * item.quantity,
+                            0
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Order Items */}
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {order.cartItems.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center border rounded-lg p-3"
+                        >
+                          <img
+                            src={item.productImageUrl}
+                            alt={item.title}
+                            className="w-20 h-20 rounded-lg object-cover"
+                          />
+                          <div className="ml-4">
+                            <h3 className="font-semibold text-lg">
+                              {item.title}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {item.category}
+                            </p>
+                            <p className="text-sm text-gray-800">
+                              x {item.quantity}
+                            </p>
+                            <p className="text-sm text-gray-900 font-bold">
+                              ₹{item.price}
+                            </p>
                           </div>
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
                   </div>
-                );
-              })}
+                ))}
+            </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </UserContext.Provider>
   );
 };
 

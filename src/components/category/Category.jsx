@@ -39,20 +39,22 @@ const Category = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="py-6 bg-gray-100">
+    <div className="py-6 bg-gray-100 overflow-hidden">
       <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 text-center mb-6">
         Shop by Category
       </h2>
-      <div className="flex overflow-x-scroll lg:justify-center hide-scroll-bar">
-        <div className="flex gap-6">
-          {category.map((item, index) => (
+      <div className="relative group">
+        {/* Scrolling container */}
+        <div className="flex gap-6 animate-scroll group-hover:animate-pause">
+          {[...category, ...category, ...category].map((item, index) => (
             <div
               key={index}
               className="flex flex-col items-center cursor-pointer"
               onClick={() => navigate(`/category/${item.name}`)}
             >
-              {/* Category Image */}
-              <div className="w-20 h-20 lg:w-28 lg:h-28 rounded-full bg-gray-200 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+              {/* Animated box around each category */}
+              <div className="relative w-20 h-20 lg:w-28 lg:h-28 rounded-full bg-gray-200 flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <div className="absolute inset-0 border-2 border-gray-300 rounded-full animate-box"></div>
                 <img
                   src={item.image}
                   alt={item.name}
@@ -69,16 +71,34 @@ const Category = () => {
         </div>
       </div>
 
-      {/* Hide Scrollbar Styling */}
+      {/* Styling */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-          .hide-scroll-bar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+          /* Scrolling Animation */
+          .animate-scroll {
+            animation: scroll 20s linear infinite;
           }
-          .hide-scroll-bar::-webkit-scrollbar {
-            display: none;
+
+          /* Pause Animation on Hover */
+          .group-hover .animate-scroll {
+            animation-play-state: paused;
+          }
+
+          /* Scrolling Keyframes */
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+
+          /* Animated Box Effect */
+          .animate-box {
+            animation: pulse 2s infinite;
+          }
+
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
           }
         `,
         }}

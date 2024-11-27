@@ -1,27 +1,44 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import myContext from "../../context/myContext";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+import { motion } from "framer-motion";
+
 
 const HomePageProductCard = () => {
   const navigate = useNavigate();
   const context = useContext(myContext);
   const { getAllProduct } = context;
 
+  const [pendingAction, setPendingAction] = useState(null); // Track pending add-to-cart actions
   const cartItems = useSelector((state) => state.cart);
+  const isLoggedIn = Boolean(localStorage.getItem("users")); // Check login status
   const dispatch = useDispatch();
 
   const addCart = (item) => {
-    dispatch(addToCart(item));
-    toast.success("Added to cart!");
+    if (isLoggedIn) {
+      dispatch(addToCart(item));
+      toast.success("Added to cart!");
+    } else {
+      setPendingAction(() => () => dispatch(addToCart(item))); // Save pending action
+      toast.error("You need to log in to add items to the cart");
+      navigate("/login"); // Redirect to login page
+    }
   };
 
   const deleteCart = (item) => {
     dispatch(deleteFromCart(item));
     toast.success("Removed from cart!");
   };
+
+  useEffect(() => {
+    if (isLoggedIn && pendingAction) {
+      pendingAction(); // Execute pending action if user logs in
+      setPendingAction(null); // Clear pending action
+    }
+  }, [isLoggedIn, pendingAction]);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -31,9 +48,29 @@ const HomePageProductCard = () => {
     <div className="mt-10">
       {/* Section Heading */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">
-          Bestselling Products
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 animate-rotate">
+          🖐 Bestselling Products 👇
         </h1>
+        <style jsx>{`
+          @keyframes rotate {
+            0% {
+              transform: rotate(0deg);
+            }
+            25% {
+              transform: rotate(5deg);
+            }
+            50% {
+              transform: rotate(-5deg);
+            }
+            100% {
+              transform: rotate(0deg);
+            }
+          }
+          .animate-rotate {
+            display: inline-block;
+            animation: rotate 3s infinite ease-in-out;
+          }
+        `}</style>
       </div>
 
       {/* Product Grid */}

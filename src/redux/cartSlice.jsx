@@ -1,67 +1,80 @@
-
-
 import { createSlice } from "@reduxjs/toolkit";
 
-// Initial state is fetched from local storage or set to an empty array
-const initialState = JSON.parse(localStorage.getItem("cart")) || [];
+const MAX_QUANTITY = 10; // Example: Define max quantity limit if needed
 
 // Helper function to save the current state to local storage
 const saveToLocalStorage = (state) => {
-  localStorage.setItem("cart", JSON.stringify(state));
+  try {
+    localStorage.setItem("cart", JSON.stringify(state));
+  } catch (error) {
+    console.error("Failed to save to localStorage:", error);
+  }
 };
+
+// Load initial state from local storage
+const loadInitialState = () => {
+  try {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  } catch {
+    return [];
+  }
+};
+
+const initialState = loadInitialState();
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    // Adds an item to the cart
     addToCart(state, action) {
-      state.push(action.payload);
+      const item = {
+        ...action.payload,
+        quantity: action.payload.quantity || 1,
+      };
+      state.push(item);
       saveToLocalStorage(state);
     },
-
-    // Deletes an item from the cart based on its id
     deleteFromCart(state, action) {
       const updatedState = state.filter(
         (item) => item.id !== action.payload.id
       );
       saveToLocalStorage(updatedState);
-      return updatedState; // Return updated state to replace the old one
+      return updatedState;
     },
-
-    // Increments quantity of an item in the cart
     incrementQuantity(state, action) {
       const item = state.find((item) => item.id === action.payload);
-      if (item) {
+      if (item && item.quantity < MAX_QUANTITY) {
         item.quantity++;
         saveToLocalStorage(state);
       }
     },
-
-    // Decrements quantity of an item in the cart, removing it if quantity is 1
     decrementQuantity(state, action) {
       const item = state.find((item) => item.id === action.payload);
       if (item) {
         if (item.quantity > 1) {
           item.quantity--;
+          saveToLocalStorage(state);
         } else {
           const updatedState = state.filter((i) => i.id !== item.id);
           saveToLocalStorage(updatedState);
           return updatedState;
         }
-        saveToLocalStorage(state);
       }
+    },
+    clearCart() {
+      const updatedState = [];
+      saveToLocalStorage(updatedState);
+      return updatedState;
     },
   },
 });
 
-// Action creators for each reducer function
 export const {
   addToCart,
   deleteFromCart,
   incrementQuantity,
   decrementQuantity,
+  clearCart,
 } = cartSlice.actions;
 
-// Exporting the reducer
 export default cartSlice.reducer;
