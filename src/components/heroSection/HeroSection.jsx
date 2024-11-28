@@ -33,12 +33,12 @@ const HeroSection = () => {
           </p>
 
           {/* Call to Action Button */}
-          <button
+          {/* <button
             onClick={handleRedirect}
             className="bg-gray-700 hover:bg-gray-900 text-white py-3 px-8 rounded-lg text-xl transition-transform transform hover:scale-105 focus:outline-none animate__animated animate__fadeInUp animate__delay-3s"
           >
             {user?.name ? `Shop Now, ${user.name}!` : "Shop Now"}
-          </button>
+          </button> */}
         </div>
       </div>
     </section>
