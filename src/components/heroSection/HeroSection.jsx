@@ -1,16 +1,16 @@
 import "animate.css";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react"; // Import useContext
-import { UserContext } from "../../pages/user/UserDashboard"; // Import UserContext
+// import { useNavigate } from "react-router-dom";
+// import { useContext } from "react"; // Import useContext
+// import { UserContext } from "../../pages/user/UserDashboard"; // Import UserContext
 
-const HeroSection = () => {
-  const navigate = useNavigate();
-  const user = useContext(UserContext); // Access user data from context
+// const HeroSection = () => {
+//   const navigate = useNavigate();
+  // const user = useContext(UserContext); // Access user data from context
 
   // Navigate to All Products page
-  const handleRedirect = () => {
-    navigate("../pages/allProduct/AllProduct");
-  };
+  // const handleRedirect = () => {
+  //   navigate("../pages/allProduct/AllProduct");
+  // };
 
   return (
     <section className="relative w-full h-screen bg-gray-900">
