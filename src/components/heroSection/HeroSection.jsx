@@ -3,7 +3,7 @@ import "animate.css";
 // import { useContext } from "react"; // Import useContext
 // import { UserContext } from "../../pages/user/UserDashboard"; // Import UserContext
 
-// const HeroSection = () => {
+const HeroSection = () => {
 //   const navigate = useNavigate();
   // const user = useContext(UserContext); // Access user data from context
 

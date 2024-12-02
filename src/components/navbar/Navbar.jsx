@@ -1,67 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useSelector } from "react-redux";
+import SearchBar from "../searchBar/SearchBar";
+import myContext from "../../context/myContext";
 
 const Navbar = () => {
-  // State to toggle the mobile menu and search bar visibility
+  const context = useContext(myContext);
+  const { getAllProduct } = context;
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-  // Fetch user from localStorage
+  const cartItems = useSelector((state) => state.cart);
   const user = JSON.parse(localStorage.getItem("users"));
-
-  // Navigate hook
   const navigate = useNavigate();
 
-  // Logout handler
   const handleLogout = () => {
     localStorage.clear("users");
     navigate("/login");
   };
-
-  // Get cart items from Redux
-  const cartItems = useSelector((state) => state.cart);
-
-  // Navigation items
-  const navList = (
-    <ul className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 text-white font-semibold text-md px-5">
-      <li>
-        <Link to="/">Home</Link>
-      </li>
-      <li>
-        <Link to="/allproduct">All Products</Link>
-      </li>
-      {!user ? (
-        <>
-          <li>
-            <Link to="/signup">Sign Up</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-        </>
-      ) : (
-        <>
-          {user?.role === "user" && (
-            <li>
-              <Link to="/user-dashboard">Dashboard</Link>
-            </li>
-          )}
-          {user?.role === "admin" && (
-            <li>
-              <Link to="/admin-dashboard">Admin Panel</Link>
-            </li>
-          )}
-          <li className="cursor-pointer" onClick={handleLogout}>
-            Logout
-          </li>
-        </>
-      )}
-      <li>
-        <Link to="/cart">Cart ({cartItems.length})</Link>
-      </li>
-    </ul>
-  );
 
   return (
     <nav className="bg-gray-800 fixed top-0 w-full z-50 shadow-lg">
@@ -79,7 +35,6 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-white focus:outline-none"
           >
-            {/* Hamburger Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -95,8 +50,6 @@ const Navbar = () => {
               />
             </svg>
           </button>
-
-          {/* Search Icon (Mobile) */}
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className="text-white focus:outline-none"
@@ -118,39 +71,76 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Navigation Menu (Desktop) */}
-        <div className="hidden lg:block">{navList}</div>
+        {/* Navigation Menu */}
+        <div className="hidden lg:block">
+          <ul className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 text-white font-semibold text-md px-5">
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/allproduct">All Products</Link>
+            </li>
+            {!user ? (
+              <>
+                <li>
+                  <Link to="/signup">Sign Up</Link>
+                </li>
+                <li>
+                  <Link to="/login">Login</Link>
+                </li>
+              </>
+            ) : (
+              <>
+                {user?.role === "user" && (
+                  <li>
+                    <Link to="/user-dashboard">Dashboard</Link>
+                  </li>
+                )}
+                {user?.role === "admin" && (
+                  <li>
+                    <Link to="/admin-dashboard">Admin Panel</Link>
+                  </li>
+                )}
+                <li className="cursor-pointer" onClick={handleLogout}>
+                  Logout
+                </li>
+              </>
+            )}
+            <li>
+              <Link to="/cart">Cart ({cartItems.length})</Link>
+            </li>
+          </ul>
+        </div>
 
-        {/* Search Bar (Desktop) */}
-        <div className="mt-4 lg:mt-0 hidden lg:block">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="px-4 py-2 rounded-lg text-gray-800 w-72"
-          />
+        {/* SearchBar Component */}
+        <div className="hidden lg:block">
+          <SearchBar getAllProduct={getAllProduct} />
         </div>
       </div>
 
-      {/* Mobile Menu (Hamburger) */}
+      {/* Mobile Menu */}
       <div
         className={`lg:hidden ${
           isMenuOpen ? "block" : "hidden"
         } bg-gray-700 py-4`}
       >
-        {navList}
+        <ul className="text-white px-4">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/allproduct">All Products</Link>
+          </li>
+        </ul>
       </div>
 
-      {/* Mobile Search Bar */}
+      {/* Mobile Search */}
       <div
         className={`lg:hidden ${
           isSearchOpen ? "block" : "hidden"
         } bg-gray-700 py-4 px-6`}
       >
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full px-4 py-2 rounded-lg text-gray-800"
-        />
+        <SearchBar getAllProduct={getAllProduct} />
       </div>
     </nav>
   );

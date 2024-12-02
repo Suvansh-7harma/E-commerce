@@ -12,10 +12,8 @@ const Signup = () => {
   const context = useContext(myContext);
   const { loading, setLoading } = context;
 
-  // navigate
   const navigate = useNavigate();
 
-  // User Signup State
   const [userSignup, setUserSignup] = useState({
     name: "",
     email: "",
@@ -29,19 +27,10 @@ const Signup = () => {
     password: "",
   });
 
-  /**========================================================================
-   *                          User Signup Function
-   *========================================================================**/
-
   const validateForm = () => {
     let isValid = true;
-    const newErrors = {
-      name: "",
-      email: "",
-      password: "",
-    };
+    const newErrors = { name: "", email: "", password: "" };
 
-    // Name Validation
     if (!userSignup.name) {
       newErrors.name = "Name is required";
       isValid = false;
@@ -50,7 +39,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Email Validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!userSignup.email) {
       newErrors.email = "Email is required";
@@ -60,7 +48,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Password Validation
     if (!userSignup.password) {
       newErrors.password = "Password is required";
       isValid = false;
@@ -74,9 +61,7 @@ const Signup = () => {
   };
 
   const userSignupFunction = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
@@ -89,7 +74,7 @@ const Signup = () => {
 
       const userData = {
         name: userSignup.name,
-        email: user.email, // Retrieve email directly from the user object
+        email: user.email,
         uid: user.uid,
         role: userSignup.role,
         time: Timestamp.now(),
@@ -103,12 +88,7 @@ const Signup = () => {
       const userReference = collection(fireDB, "user");
       await addDoc(userReference, userData);
 
-      setUserSignup({
-        name: "",
-        email: "",
-        password: "",
-      });
-
+      setUserSignup({ name: "", email: "", password: "" });
       toast.success("Signup Successfully");
       setLoading(false);
       navigate("/login");
@@ -122,69 +102,50 @@ const Signup = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       {loading && <Loader />}
-      {/* Signup Form  */}
       <div className="bg-white px-8 py-6 border border-gray-300 rounded-xl shadow-md w-full max-w-sm">
-        {/* Top Heading  */}
         <div className="mb-5 text-center">
           <h2 className="text-2xl font-bold text-gray-700">Signup</h2>
         </div>
-
-        {/* Name Input  */}
         <div className="mb-4">
           <input
             type="text"
             placeholder="Full Name"
             value={userSignup.name}
-            onChange={(e) => {
-              setUserSignup({
-                ...userSignup,
-                name: e.target.value,
-              });
-            }}
+            onChange={(e) =>
+              setUserSignup({ ...userSignup, name: e.target.value })
+            }
             className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
           {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
-
-        {/* Email Input  */}
         <div className="mb-4">
           <input
             type="email"
             placeholder="Email Address"
             value={userSignup.email}
-            onChange={(e) => {
-              setUserSignup({
-                ...userSignup,
-                email: e.target.value,
-              });
-            }}
+            onChange={(e) =>
+              setUserSignup({ ...userSignup, email: e.target.value })
+            }
             className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
           {errors.email && (
             <p className="text-red-500 text-sm">{errors.email}</p>
           )}
         </div>
-
-        {/* Password Input  */}
         <div className="mb-5">
           <input
             type="password"
             placeholder="Password"
             value={userSignup.password}
-            onChange={(e) => {
-              setUserSignup({
-                ...userSignup,
-                password: e.target.value,
-              });
-            }}
+            onChange={(e) =>
+              setUserSignup({ ...userSignup, password: e.target.value })
+            }
             className="bg-gray-50 border border-gray-300 px-4 py-2 w-full rounded-md outline-none placeholder-gray-400"
           />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password}</p>
           )}
         </div>
-
-        {/* Signup Button  */}
         <div className="mb-5">
           <button
             type="button"
@@ -194,8 +155,6 @@ const Signup = () => {
             Signup
           </button>
         </div>
-
-        {/* Login Link  */}
         <div className="text-center">
           <h2 className="text-gray-700">
             Already have an account?{" "}

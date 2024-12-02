@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import NoPage from "./pages/noPage/NoPage";
 import ProductInfo from "./pages/productInfo/ProductInfo";
@@ -18,23 +23,27 @@ import { ProtectedRouteForAdmin } from "./protectedRouteForUser/ProtectedRouteFo
 import CategoryPage from "./pages/category/CategoryPage";
 
 const App = () => {
+  const isLoggedIn = localStorage.getItem("users"); // Check if user is logged in
+
   return (
     <MyState>
       <Router>
         <ScrollTop />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Redirect new users to Signup */}
+          <Route
+            path="/"
+            element={isLoggedIn ? <HomePage /> : <Navigate to="/signup" />}
+          />
           <Route path="/*" element={<NoPage />} />
           <Route path="/productinfo/:id" element={<ProductInfo />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/allproduct" element={<AllProduct />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* Show Signup only if user is not logged in */}
+          {!isLoggedIn && <Route path="/signup" element={<Signup />} />}
+          {/* Show Login page */}
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/category/:categoryname"
-            element={<CategoryPage />}
-          />{" "}
-          {/* category Page route  */}
+          <Route path="/category/:categoryname" element={<CategoryPage />} />
           <Route
             path="/user-dashboard"
             element={
